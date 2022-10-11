@@ -1,6 +1,6 @@
 {
   "name": "horus-sdk",
-  "productName": "horus-sdk",
+  "productName": "horus-sdk https://github.com/dkipp/my-app/blob/master/src/renderer.ts",
   "version": "1.0.1",
   "description": "My Electron application description",
   "main": ".webpack/main",
