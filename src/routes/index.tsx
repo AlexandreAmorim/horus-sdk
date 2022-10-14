@@ -1,13 +1,15 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import { Dashboard } from "../pages/Dashboard";
-import { Home } from "../pages/Home";
+import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { useAuth } from '../contexts/auth';
+import { OffRoutes } from './off.routes';
+import { AuthRoutes } from './auth.routes';
 
-export default function AppRoutes() {
+export function AppRoutes() {
+  const { user } = useAuth();
+
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="dashboard" element={<Dashboard />} />
-    </Routes>
+    <MemoryRouter>
+      {user.id ? <AuthRoutes /> : <OffRoutes />}
+    </MemoryRouter>
   );
 }

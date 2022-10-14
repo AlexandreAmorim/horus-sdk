@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, Notification } from "electron";
 const isDev = !app.isPackaged;
+import { User } from './models/User'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -13,9 +14,8 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     width: 1100,
     height: 700,
-    backgroundColor: "#191622",
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
       contextIsolation: true,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -27,13 +27,24 @@ const createWindow = (): void => {
 };
 
 async function registerListeners() {
-  ipcMain.on("message", (_, message) => {
-    console.log(message);
-  });
 
   ipcMain.on("notify", (_, message) => {
     new Notification({ title: "Notification", body: message }).show();
   });
+
+  ipcMain.handle("list", async () => {
+    const user = await User.findAll()
+    return JSON.parse(JSON.stringify(user))
+  })
+
+  ipcMain.handle("create", async (_, user) => {
+    const result = await User.create({
+      name: user.name,
+      local: user.local
+    });
+    return JSON.parse(JSON.stringify(result))
+  })
+
 }
 
 app

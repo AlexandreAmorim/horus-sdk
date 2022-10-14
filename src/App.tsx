@@ -1,13 +1,11 @@
-import { GlobalStyle } from "./styles/GlobalStyle";
-import { MemoryRouter } from "react-router-dom";
-import AppRoutes from "./routes";
 import React from "react";
+import { AppRoutes } from "./routes/index";
+import { AuthProvider } from "./contexts/auth";
 
 export function App() {
   return (
-    <MemoryRouter>
-      <GlobalStyle />
+    <AuthProvider>
       <AppRoutes />
-    </MemoryRouter>
+    </AuthProvider>
   );
 }

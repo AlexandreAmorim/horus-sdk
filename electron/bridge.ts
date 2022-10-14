@@ -1,21 +1,20 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 export const api = {
-  sendMessage: (message: string) => {
-    ipcRenderer.send("message", message);
-  },
-
-  sendStatus: () => {
-    const status = navigator.onLine ? "online" : "offline";
-    ipcRenderer.send("status ", status);
-  },
 
   notificationApi: (message: string) => {
     ipcRenderer.send("notify", message);
   },
 
-  batteryApi: {},
-  fileApi: {},
+  fileApi: async () => {
+    const response = await ipcRenderer.invoke('list');
+    return response
+  },
+
+  createUser: async (user: object) => {
+    const response = await ipcRenderer.invoke('create', user);
+    return response
+  },
 
   // eslint-disable-next-line @typescript-eslint/ban-types
   on: (channel: string, callback: Function) => {

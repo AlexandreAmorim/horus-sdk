@@ -8,7 +8,8 @@ module.exports = {
   module: {
     rules: require('./webpack.rules'),
   },
+  externals: ['pg', 'sqlite3', 'mysql2', 'pg-hstore'],
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json', '.scss', '.sass'],
   },
 };
