@@ -5,34 +5,26 @@ interface NotificationProviderProps {
     children: ReactNode;
 }
 
-interface Note {
-    message: string;
-}
-
 interface INotificationContextData {
-    note: Note;
+    isOnline: boolean;
 }
 
 const NotificationContext = createContext({} as INotificationContextData);
 
 function NotificationProvider({ children }: NotificationProviderProps) {
-    const [note, setNote] = useState<Note>({} as Note);
-    const [userLoading, setUserStorgeLoading] = useState(true);
+    const [isOnline, setIsOnline] = useState<boolean>(false);
 
     useEffect(() => {
-        async function loadStorageData() {
-            setUserStorgeLoading(true);
-            const alertOnlineStatus = navigator.onLine ? 'online' : 'offline'
-
-            window.Main.notificationApi(alertOnlineStatus);
-            setUserStorgeLoading(false);
+        async function loadOnline() {
+            const alertOnlineStatus = navigator.onLine ? true : false
+            setIsOnline(alertOnlineStatus)
         }
-        loadStorageData();
+        loadOnline();
     }, []);
 
     return (
         <NotificationContext.Provider value={{
-            note,
+            isOnline,
         }}>
             {children}
         </NotificationContext.Provider>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 import api from "../service/api";
+import { useToast } from '@chakra-ui/react'
 
 interface AuthProviderProps {
     children: ReactNode;
@@ -32,6 +33,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     const userStorgeKey = '@horus-desktop:user';
     const [user, setUser] = useState<User>({} as User);
     const [userLoading, setUserStorgeLoading] = useState(true);
+    const toast = useToast()
 
     const signIn = useCallback(async ({ document, password }: SignInCredentials) => {
         const { status, data } = await api.post('/auth/login', {
@@ -41,21 +43,31 @@ function AuthProvider({ children }: AuthProviderProps) {
 
         if (status === 200) {
             const { token, refresh_token, user } = data;
+            const { allocation } = user;
 
-            const userLogged = {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                token: token,
-                refresh_token: refresh_token
+            if (allocation.management_id !== 1) {
+                toast({
+                    title: 'Usuário sem acesso.',
+                    description: "Não foi possível acessar o sistema.",
+                    status: 'warning',
+                    duration: 9000,
+                    isClosable: true,
+                })
+            } else {
+                const userLogged = {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    token: token,
+                    refresh_token: refresh_token
+                }
+
+                setUser(userLogged);
+                await localStorage.setItem(userStorgeKey, JSON.stringify(userLogged));
+
+                const storagedUser = await localStorage.getItem(userStorgeKey);
+                console.log("storagedUser ", storagedUser)
             }
-
-            setUser(userLogged);
-            await localStorage.setItem(userStorgeKey, JSON.stringify(userLogged));
-
-            const storagedUser = await localStorage.getItem(userStorgeKey);
-            console.log("storagedUser ", storagedUser)
-
         }
     }, [])
 
