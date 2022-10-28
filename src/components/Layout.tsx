@@ -14,7 +14,7 @@ export function Layout({ children }: IPropsLayout) {
             <Header />
 
             <Flex as="main" flex="1">
-                <Flex flex="1">
+                <Flex flex="1" flexDirection="column">
                     {children}
                 </Flex>
                 <Sidebar />

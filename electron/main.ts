@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, Notification } from "electron";
+import { User } from './models/User';
 const isDev = !app.isPackaged;
-import { User } from './models/User'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;

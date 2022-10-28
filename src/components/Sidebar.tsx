@@ -1,4 +1,4 @@
-import { Box, Text, Flex, Button } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import React from "react";
 import { useAuth } from "../contexts/auth";
 import { OperationCard } from "./OperationCard";
@@ -8,8 +8,8 @@ export function Sidebar() {
 
     const data = new Date()
 
-    function handleSignOut() {
-        signOut()
+    async function handleSignOut() {
+        await signOut()
     }
 
     return (

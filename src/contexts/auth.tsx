@@ -1,7 +1,6 @@
-import React from 'react';
-import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { useToast } from '@chakra-ui/react';
+import React, { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import api from "../service/api";
-import { useToast } from '@chakra-ui/react'
 
 interface AuthProviderProps {
     children: ReactNode;

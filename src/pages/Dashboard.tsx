@@ -1,7 +1,7 @@
+import { Flex, SimpleGrid } from "@chakra-ui/react";
 import React from "react";
+import { DashCard } from "../components/DashCard";
 import { Header } from "../components/Header";
-import { Box, Flex, SimpleGrid } from "@chakra-ui/react";
-import { DashCard } from "..//components/DashCard";
 
 export function Dashboard() {
 
