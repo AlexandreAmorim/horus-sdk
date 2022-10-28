@@ -1,7 +1,7 @@
 import { Button, Flex, IconButton, Stack, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ListDashes } from "phosphor-react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
@@ -12,19 +12,26 @@ import { Layout } from "../components/Layout";
 import { LoadingView } from "../components/LoadingView";
 import { useAuth } from "../contexts/auth";
 import { useNotification } from '../contexts/notification';
-import api from "../service/api";
 import parseDate from "../utils/parseDate";
 
 interface FormValues {
     team: string[],
     place: string,
+    district: string
+    county: string,
     date_operation: string
+    complement: string,
+    open: boolean,
 }
 
 const defaultValues: FormValues = {
     team: [],
     place: '',
+    district: '',
+    county: '',
     date_operation: '',
+    complement: '',
+    open: true,
 };
 
 const formSchema = yup.object().shape({
@@ -36,11 +43,7 @@ const formSchema = yup.object().shape({
 
 export function Operation() {
     const { isOnline } = useNotification()
-    const [users, setUsers] = useState<any[]>([]);
-    const [page, setPage] = React.useState(1);
-    const [perPage, setPerPage] = React.useState(6);
-    const [lastPage, setLastPage] = React.useState(1);
-    const [filter, setFilter] = useState('');
+    const [operations, setOperations] = useState<any[]>([]);
     const { signOut } = useAuth()
 
     const { register, handleSubmit, reset, formState, control } = useForm<FormValues>({
@@ -52,42 +55,38 @@ export function Operation() {
         return <LoadingView message="Aplicação está sem conexão com a internet. Você precisa estar on-line para iniciar a operação!" />
     }
 
+    const init = useCallback(async () => {
+        const data = await window.Main.listOperations()
+        console.log(data)
+        setOperations(data)
+    }, [])
+
     useEffect(() => {
-        async function loadRules(): Promise<void> {
-            const data = await api.get('/users', {
-                params: {
-                    page,
-                    perPage,
-                    filter,
-                },
-            });
-
-            if (data) {
-                console.log("Sucesso", data)
-            } else {
-                console.log("Erro", data)
-                signOut()
-            }
-
-        }
-        loadRules();
-    }, []);
+        init()
+    }, [])
 
     const handleCreateOp: SubmitHandler<any> = async (data: any) => {
         const _user = {
             ...data,
+            document: '04160807747',
+            district: data.district?.value,
+            county: data.county?.value,
+            team: data.team?.value,
+            open: true
         };
 
         try {
-
             console.log("User ", _user)
-        } catch {
-            console.log("Error happened");
+            let result = await window.Main.createOperation(_user);
+            console.log("result", result)
+            init();
+        } catch (err) {
+            console.log("Error happened", err);
         }
     };
 
     return (
-        <Layout>
+        <Layout operations={operations}>
             <Link to="/">
                 <IconButton
                     bg="gray.700"
@@ -157,8 +156,8 @@ export function Operation() {
                         />
                         <ControlledSelect<FormValues, any, true>
                             placeholder="Município"
-                            instanceId="team"
-                            name="team"
+                            instanceId="county"
+                            name="county"
                             control={control}
                             options={[
                                 { value: 'RIO DE JANEIRO', label: 'RIO DE JANEIRO' },
@@ -169,8 +168,8 @@ export function Operation() {
                         />
                         <ControlledSelect<FormValues, any, true>
                             placeholder="Bairro"
-                            instanceId="team"
-                            name="team"
+                            instanceId="district"
+                            name="district"
                             control={control}
                             options={[
                                 { value: 'CENTRO', label: 'CENTRO' },
@@ -188,12 +187,12 @@ export function Operation() {
                             {...register("place")}
                         />
                         <Input
-                            name="place"
+                            name="complement"
                             type="text"
                             placeholder='Complemento'
                             bgColor="gray.700"
-                            error={errors.place}
-                            {...register("place")}
+                            error={errors.complement}
+                            {...register("complement")}
                         />
                     </Stack>
                     <Button

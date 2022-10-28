@@ -3,7 +3,19 @@ import React from "react";
 import { useAuth } from "../contexts/auth";
 import { OperationCard } from "./OperationCard";
 
-export function Sidebar() {
+interface IOperation {
+    id: string;
+    place: string;
+    open: boolean;
+    streaming: boolean;
+    createdAt: Date;
+}
+
+interface IProps {
+    operations?: IOperation[]
+}
+
+export function Sidebar({ operations }: IProps) {
     const { signOut } = useAuth()
 
     const data = new Date()
@@ -11,6 +23,8 @@ export function Sidebar() {
     async function handleSignOut() {
         await signOut()
     }
+
+    console.log("JKJKJ ", operations)
 
     return (
         <Flex
@@ -35,7 +49,17 @@ export function Sidebar() {
             </Box>
 
             <Flex flexDirection="column" gap={8}>
-                <OperationCard title="0.01.06 - Av. Mem de Sá esquina com Rua do Senado + volante na Rua Tenente Possolo, Centro, RJ." availableAt={data} />
+                {operations && operations.map((op: IOperation) => (
+                    <OperationCard
+                        key={op.id}
+                        place={op.place}
+                        open={op.open}
+                        streaming={op.streaming}
+                        availableAt={data}
+                    />
+                ))
+                }
+
             </Flex>
 
             <Box>

@@ -4,10 +4,11 @@ import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 
 interface IPropsLayout {
+    operations?: any[];
     children: ReactNode
 }
 
-export function Layout({ children }: IPropsLayout) {
+export function Layout({ operations, children }: IPropsLayout) {
 
     return (
         <Flex flexDirection="column" minH="100vh">
@@ -17,7 +18,7 @@ export function Layout({ children }: IPropsLayout) {
                 <Flex flex="1" flexDirection="column">
                     {children}
                 </Flex>
-                <Sidebar />
+                <Sidebar operations={operations} />
             </Flex>
         </Flex>
     );

@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
 import { Flex, IconButton } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from 'yup'
-import { Header } from "../components/Header";
-import { Link } from "react-router-dom";
 import { ListDashes } from "phosphor-react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import * as yup from 'yup';
+import { Header } from "../components/Header";
 
 const signInFormSchema = yup.object().shape({
     name: yup.string().required('Nome obrigatório'),
-    local: yup.string().required('local obrigatória'),
+    document: yup.string().required('Documento obrigatória'),
 })
 
 interface User {
     id: number,
     name: string,
-    local: string,
+    document: string,
     createdAt: string
 }
 
@@ -26,7 +26,7 @@ export function Users() {
     })
 
     async function init() {
-        const data = await window.Main.fileApi()
+        const data = await window.Main.listUsers()
         console.log(data)
         setUsers(data)
     }
@@ -58,8 +58,8 @@ export function Users() {
                 />
                 <input
                     type="text"
-                    name="local"
-                    {...register('local')}
+                    name="document"
+                    {...register('document')}
                 />
 
                 <button
@@ -73,7 +73,7 @@ export function Users() {
                 {users && users.map((u: User) => (
                     <ul key={u.id}>
                         <li>{u.name}</li>
-                        <li>{u.local}</li>
+                        <li>{u.document}</li>
                         <li>{u.createdAt}</li>
                     </ul>
                 ))}

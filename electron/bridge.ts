@@ -6,13 +6,23 @@ export const api = {
     ipcRenderer.send("notify", message);
   },
 
-  fileApi: async () => {
-    const response = await ipcRenderer.invoke('list');
+  listUsers: async () => {
+    const response = await ipcRenderer.invoke('listUsers');
     return response
   },
 
   createUser: async (user: object) => {
-    const response = await ipcRenderer.invoke('create', user);
+    const response = await ipcRenderer.invoke('createUser', user);
+    return response
+  },
+
+  createOperation: async (operation: object) => {
+    const response = await ipcRenderer.invoke('createOperation', operation);
+    return response
+  },
+
+  listOperations: async () => {
+    const response = await ipcRenderer.invoke('listOperations');
     return response
   },
 

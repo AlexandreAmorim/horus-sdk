@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, Notification } from "electron";
+import { Operation } from './models/Operations';
 import { User } from './models/User';
 const isDev = !app.isPackaged;
 
@@ -32,17 +33,41 @@ async function registerListeners() {
     new Notification({ title: "Notification", body: message }).show();
   });
 
-  ipcMain.handle("list", async () => {
+  ipcMain.handle("listUsers", async () => {
     const user = await User.findAll()
     return JSON.parse(JSON.stringify(user))
   })
 
-  ipcMain.handle("create", async (_, user) => {
+  ipcMain.handle("createUser", async (_, user) => {
     const result = await User.create({
       name: user.name,
       local: user.local
     });
     return JSON.parse(JSON.stringify(result))
+  })
+
+  ipcMain.handle("createOperation", async (_, operation) => {
+    const result = await Operation.create({
+      document: operation.document,
+      team: operation.team,
+      date_operation: operation.date_operation,
+      county: operation.county,
+      district: operation.district,
+      place: operation.place,
+      complement: operation.complement,
+      open: 1,
+      streaming: 0,
+    });
+    return JSON.parse(JSON.stringify(result))
+  })
+
+  ipcMain.handle("listOperations", async () => {
+    const operations = await Operation.findAll({
+      order: [
+        ['createdAt', 'DESC']]
+    })
+    console.log("XX ", operations)
+    return JSON.parse(JSON.stringify(operations))
   })
 
 }

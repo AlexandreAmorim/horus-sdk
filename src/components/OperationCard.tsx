@@ -1,18 +1,19 @@
-import { CheckCircle, Lock } from 'phosphor-react'
-import { isPast, format } from 'date-fns'
-import ptBR from 'date-fns/locale/pt-BR'
-import { Link } from 'react-router-dom';
-import React from 'react';
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
+import { CheckCircle, Lock } from 'phosphor-react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface LessonProps {
-    title: string;
+    place: string;
+    open: boolean;
+    streaming: boolean;
     availableAt: Date;
 }
 
 export function OperationCard(props: LessonProps) {
 
-    const isAvailable = isPast(props.availableAt)
     const availableDateFormatted = format(props.availableAt, "EEEE' • 'd' de 'MMMM' • 'k'h'mm", {
         locale: ptBR,
     })
@@ -34,7 +35,7 @@ export function OperationCard(props: LessonProps) {
                 }}
             >
                 <Flex alignItems='center' justifyContent="space-between">
-                    {isAvailable ? (
+                    {props.open ? (
                         <HStack color="blue.500">
                             <CheckCircle size={20} />
                             <Text
@@ -58,26 +59,46 @@ export function OperationCard(props: LessonProps) {
                             </Text>
                         </HStack>
                     )}
-                    <HStack>
-                        <Box
-                            border="1px"
-                            borderRadius={4}
-                            borderColor="red.300"
-                            py="-0.125"
-                            px={2}
-                        >
-                            <Text
-                                fontSize="xs"
-                                color='red.500'
-                                fontWeight="medium"
+                    {!props.streaming ? (
+                        <HStack>
+                            <Box
+                                border="1px"
+                                borderRadius={4}
+                                borderColor="red.300"
+                                py="-0.125"
+                                px={2}
                             >
-                                NÃO ENVIADO
-                            </Text>
-                        </Box>
-                    </HStack>
+                                <Text
+                                    fontSize="xs"
+                                    color='red.500'
+                                    fontWeight="medium"
+                                >
+                                    NÃO ENVIADO
+                                </Text>
+                            </Box>
+                        </HStack>
+                    ) : (
+                        <HStack>
+                            <Box
+                                border="1px"
+                                borderRadius={4}
+                                borderColor="blue.300"
+                                py="-0.125"
+                                px={2}
+                            >
+                                <Text
+                                    fontSize="xs"
+                                    color='blue.500'
+                                    fontWeight="medium"
+                                >
+                                    ENVIADO
+                                </Text>
+                            </Box>
+                        </HStack>
+                    )}
                 </Flex>
                 <Text mt={5} color="white" align="justify">
-                    {props.title}
+                    {props.place}
                 </Text>
             </Box>
         </Link>
