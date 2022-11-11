@@ -21,8 +21,13 @@ export const api = {
     return response
   },
 
-  listOperations: async () => {
-    const response = await ipcRenderer.invoke('listOperations');
+  listOperations: async (user: object) => {
+    const response = await ipcRenderer.invoke('listOperations', user);
+    return response
+  },
+
+  listOperationOpen: async (user: object) => {
+    const response = await ipcRenderer.invoke('listOperationOpen', user);
     return response
   },
 

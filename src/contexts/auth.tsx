@@ -15,6 +15,7 @@ interface User {
     id: string;
     name: string;
     email: string;
+    document: string;
     token?: string;
     refresh_token?: string;
 }
@@ -43,7 +44,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         if (status === 200) {
             const { token, refresh_token, user } = data;
             const { allocation } = user;
-
+            console.log('data ', user)
             if (allocation.management_id !== 1) {
                 toast({
                     title: 'Usuário sem acesso.',
@@ -57,6 +58,7 @@ function AuthProvider({ children }: AuthProviderProps) {
                     id: user.id,
                     name: user.name,
                     email: user.email,
+                    document: document,
                     token: token,
                     refresh_token: refresh_token
                 }

@@ -11,6 +11,16 @@ export const theme = extendTheme(
                 body: {
                     bg: 'gray.900',
                     color: 'gray.100',
+                    '&::-webkit-scrollbar': {
+                        width: '16px',
+                        height: '16px',
+                    },
+
+                    '&::-webkit-scrollbar-thumb': {
+                        with: '2px',
+                        backgroundColor: '#29292E',
+                        borderWidth: '8 0 8 0',
+                    },
                 },
             },
         },

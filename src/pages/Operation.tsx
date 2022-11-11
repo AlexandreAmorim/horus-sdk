@@ -1,25 +1,20 @@
-import { Button, Flex, IconButton, Stack, Text } from "@chakra-ui/react";
+import { Button, Flex, HStack, Stack, Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ListDashes } from "phosphor-react";
-import React, { useCallback, useEffect, useState } from "react";
+import { CalendarBlank, Clock } from "phosphor-react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { ControlledSelect } from "../components/ControlledSelect";
+import { Header } from "../components/Header";
 import { Input } from "../components/Input";
-import { InputMasked } from "../components/InputMasked";
-import { Layout } from "../components/Layout";
-import { LoadingView } from "../components/LoadingView";
 import { useAuth } from "../contexts/auth";
-import { useNotification } from '../contexts/notification';
-import parseDate from "../utils/parseDate";
 
 interface FormValues {
     team: string[],
     place: string,
     district: string
     county: string,
-    date_operation: string
     complement: string,
     open: boolean,
 }
@@ -29,89 +24,97 @@ const defaultValues: FormValues = {
     place: '',
     district: '',
     county: '',
-    date_operation: '',
     complement: '',
     open: true,
 };
 
 const formSchema = yup.object().shape({
-    date_operation: yup
-        .string()
-        .transform(parseDate)
-        .typeError("Insira uma data válida"),
 });
 
 export function Operation() {
-    const { isOnline } = useNotification()
-    const [operations, setOperations] = useState<any[]>([]);
-    const { signOut } = useAuth()
+    const { user } = useAuth()
+    let navigate = useNavigate();
+    const [dateState, setDateState] = useState(new Date());
 
     const { register, handleSubmit, reset, formState, control } = useForm<FormValues>({
         resolver: yupResolver(formSchema),
         defaultValues
     });
     const { errors } = formState;
-    if (!isOnline) {
-        return <LoadingView message="Aplicação está sem conexão com a internet. Você precisa estar on-line para iniciar a operação!" />
-    }
-
-    const init = useCallback(async () => {
-        const data = await window.Main.listOperations()
-        console.log(data)
-        setOperations(data)
-    }, [])
-
-    useEffect(() => {
-        init()
-    }, [])
 
     const handleCreateOp: SubmitHandler<any> = async (data: any) => {
-        const _user = {
+        const _data = {
             ...data,
-            document: '04160807747',
+            cod: `${'OP' + dateState.getTime()}`,
+            start_operation: dateState.toISOString().slice(0, 19).replace('T', ' '),
+            document: user.document,
             district: data.district?.value,
             county: data.county?.value,
             team: data.team?.value,
             open: true
         };
 
+        console.log(_data)
+
         try {
-            console.log("User ", _user)
-            let result = await window.Main.createOperation(_user);
+            let result = await window.Main.createOperation(_data);
             console.log("result", result)
-            init();
+            navigate('/approaches')
         } catch (err) {
             console.log("Error happened", err);
         }
     };
 
+
+    useEffect(() => {
+        setInterval(() => setDateState(new Date()), 30000);
+    }, []);
+
     return (
-        <Layout operations={operations}>
-            <Link to="/">
-                <IconButton
-                    bg="gray.700"
-                    aria-label='Search database'
-                    icon={<ListDashes />}
-                />
-            </Link>
+        <Flex flexDirection="column">
+            <Header />
             <Flex
                 alignItems="center"
                 justifyContent="center"
+                flexDirection="column"
             >
                 <Flex
                     as="form"
                     width="100%"
-                    maxWidth={400}
-                    p={[6, 8]}
+                    maxWidth={600}
+                    p={[2, 4]}
                     flexDirection="column"
                     onSubmit={handleSubmit(handleCreateOp)}
                 >
                     <Stack spacing="4">
                         <Text fontSize='2xl' align='center'>Nova Operação</Text>
+                        <HStack justifyContent="space-between" bgColor="gray.700" borderRadius={4} p={4}>
+                            <Flex alignItems="center" gap={1}>
+                                <CalendarBlank size={20} />
+                                {' '}
+                                {dateState.toLocaleDateString('pt-BR',
+                                    {
+                                        day: 'numeric',
+                                        month: 'short',
+                                        year: 'numeric',
+                                    })}
+                            </Flex>
+                            <Flex alignItems="center" gap={1}>
+                                <Clock size={20} />
+                                {dateState.toLocaleString('pt-BR',
+                                    {
+                                        hour: 'numeric',
+                                        minute: 'numeric',
+                                        hour12: false,
+                                    })}
+                            </Flex>
+                        </HStack>
+
                         <ControlledSelect<FormValues, any, true>
-                            placeholder="Equipe"
+                            label="Equipe"
                             instanceId="team"
                             name="team"
+                            bgColor="gray.700"
                             control={control}
                             options={[
                                 { value: 'A1', label: 'A1' },
@@ -146,42 +149,38 @@ export function Operation() {
                                 { value: 'C10', label: 'C10' },
                             ]}
                         />
-                        <InputMasked
-                            mask="99/99/9999"
-                            name="date_operation"
-                            placeholder='Data da Operação'
-                            bgColor="gray.700"
-                            error={errors.date_operation}
-                            {...register("date_operation")}
-                        />
-                        <ControlledSelect<FormValues, any, true>
-                            placeholder="Município"
-                            instanceId="county"
-                            name="county"
-                            control={control}
-                            options={[
-                                { value: 'RIO DE JANEIRO', label: 'RIO DE JANEIRO' },
-                                { value: 'NITEROI', label: 'NITEROI' },
-                                { value: 'DUQUE DE CAXIAS', label: 'DUQUE DE CAXIAS' },
-                                { value: 'SÃO GONÇALO', label: 'SÃO GONÇALO' },
-                            ]}
-                        />
-                        <ControlledSelect<FormValues, any, true>
-                            placeholder="Bairro"
-                            instanceId="district"
-                            name="district"
-                            control={control}
-                            options={[
-                                { value: 'CENTRO', label: 'CENTRO' },
-                                { value: 'BOTAFOGO', label: 'BOTAFOGO' },
-                                { value: 'BARRA DA TIJUCA', label: 'BARRA DA TIJUCA' },
-                                { value: 'LAGOA', label: 'LAGOA' },
-                            ]}
-                        />
+                        <HStack>
+                            <ControlledSelect<FormValues, any, true>
+                                label="Município"
+                                instanceId="county"
+                                name="county"
+                                bgColor="gray.700"
+                                control={control}
+                                options={[
+                                    { value: 'RIO DE JANEIRO', label: 'RIO DE JANEIRO' },
+                                    { value: 'NITEROI', label: 'NITEROI' },
+                                    { value: 'DUQUE DE CAXIAS', label: 'DUQUE DE CAXIAS' },
+                                    { value: 'SÃO GONÇALO', label: 'SÃO GONÇALO' },
+                                ]}
+                            />
+                            <ControlledSelect<FormValues, any, true>
+                                label="Bairro"
+                                instanceId="district"
+                                name="district"
+                                bgColor="gray.700"
+                                control={control}
+                                options={[
+                                    { value: 'CENTRO', label: 'CENTRO' },
+                                    { value: 'BOTAFOGO', label: 'BOTAFOGO' },
+                                    { value: 'BARRA DA TIJUCA', label: 'BARRA DA TIJUCA' },
+                                    { value: 'LAGOA', label: 'LAGOA' },
+                                ]}
+                            />
+                        </HStack>
                         <Input
                             name="place"
                             type="text"
-                            placeholder='Logradouro'
+                            label='Logradouro'
                             bgColor="gray.700"
                             error={errors.place}
                             {...register("place")}
@@ -189,7 +188,7 @@ export function Operation() {
                         <Input
                             name="complement"
                             type="text"
-                            placeholder='Complemento'
+                            label='Complemento'
                             bgColor="gray.700"
                             error={errors.complement}
                             {...register("complement")}
@@ -212,7 +211,7 @@ export function Operation() {
                         AVANÇAR
                     </Button>
                 </Flex>
-            </Flex >
-        </Layout>
+            </Flex>
+        </Flex>
     );
 }

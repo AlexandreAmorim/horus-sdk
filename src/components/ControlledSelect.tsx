@@ -13,6 +13,7 @@ interface ControlledSelectProps<
 > extends Omit<SelectProps<Option, IsMulti, Group>, "name" | "defaultValue">,
   UseControllerProps<FormValues> {
   label?: string;
+  bgColor?: string;
 }
 
 export function ControlledSelect<
@@ -23,6 +24,7 @@ export function ControlledSelect<
 >({
   name,
   label,
+  bgColor = 'gray.900',
   options,
   control,
   rules,
@@ -49,7 +51,7 @@ export function ControlledSelect<
           control: (provided) => ({
             ...provided,
             border: 'none',
-            background: 'gray.700',
+            background: bgColor,
             cursor: 'pointer',
             height: "3rem"
           }),
@@ -58,19 +60,19 @@ export function ControlledSelect<
             my: 0,
             borderTopLeftRadius: "md",
             borderTopRightRadius: "md",
-            background: 'gray.700',
+            background: bgColor,
             borderBottomRadius: "md",
           }),
           menuList: (provided) => ({
             ...provided,
-            background: 'gray.700',
+            background: bgColor,
             borderTopLeftRadius: "md",
             borderTopRightRadius: "md",
             border: 0,
           }),
           option: (provided, state) => ({
             ...provided,
-            backgroundColor: state.isFocused ? "gray.600" : "gray.700",
+            backgroundColor: state.isFocused ? "gray.600" : bgColor,
           })
         }}
         options={options}

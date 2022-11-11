@@ -1,6 +1,5 @@
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import React from "react";
-import { useAuth } from "../contexts/auth";
 import { OperationCard } from "./OperationCard";
 
 interface IOperation {
@@ -8,7 +7,7 @@ interface IOperation {
     place: string;
     open: boolean;
     streaming: boolean;
-    createdAt: Date;
+    createdAt: Date | string | null | undefined;
 }
 
 interface IProps {
@@ -16,13 +15,7 @@ interface IProps {
 }
 
 export function Sidebar({ operations }: IProps) {
-    const { signOut } = useAuth()
-
     const data = new Date()
-
-    async function handleSignOut() {
-        await signOut()
-    }
 
     console.log("JKJKJ ", operations)
 
@@ -48,29 +41,21 @@ export function Sidebar({ operations }: IProps) {
                 Operações recentes
             </Box>
 
-            <Flex flexDirection="column" gap={8}>
+            <Flex
+                flexDirection="column"
+                gap={8}
+            >
                 {operations && operations.map((op: IOperation) => (
                     <OperationCard
                         key={op.id}
                         place={op.place}
                         open={op.open}
                         streaming={op.streaming}
-                        availableAt={data}
+                        createdAt={data}
                     />
                 ))
                 }
-
             </Flex>
-
-            <Box>
-                <Button
-                    onClick={handleSignOut}
-                    textAlign="center"
-                    bg="gray.600"
-                >
-                    <Text fontSize="sm" fontWeight="bold">Sair</Text>
-                </Button>
-            </Box>
         </Flex>
     );
 }

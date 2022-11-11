@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Analytics } from '../pages/Analytics';
+import { Approaches } from '../pages/Approaches';
 import { Dashboard } from '../pages/Dashboard';
 import { Operation } from '../pages/Operation';
 import { Users } from '../pages/Users';
@@ -13,6 +14,7 @@ export function AuthRoutes() {
       <Route path="/operations" element={<Operation />} />
       <Route path="/users" element={<Users />} />
       <Route path="/analytics" element={<Analytics />} />
+      <Route path="/approaches" element={<Approaches />} />
     </Routes>
   )
 }

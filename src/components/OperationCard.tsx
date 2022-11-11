@@ -1,27 +1,22 @@
 import { Box, Flex, HStack, Text } from '@chakra-ui/react';
-import { format } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
 import { CheckCircle, Lock } from 'phosphor-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-interface LessonProps {
+interface OpProps {
+    key: string;
     place: string;
     open: boolean;
     streaming: boolean;
-    availableAt: Date;
+    start_operation: Date;
 }
 
-export function OperationCard(props: LessonProps) {
-
-    const availableDateFormatted = format(props.availableAt, "EEEE' • 'd' de 'MMMM' • 'k'h'mm", {
-        locale: ptBR,
-    })
+export function OperationCard(props: OpProps) {
 
     return (
         <Link to={`/`}>
             <Box as="span" color="gray.300">
-                {availableDateFormatted}
+                Data
             </Box>
 
             <Box

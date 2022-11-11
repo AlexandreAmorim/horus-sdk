@@ -8,6 +8,9 @@ export const Operation = sequelize.define('operations', {
         allowNull: false,
         primaryKey: true
     },
+    cod: {
+        type: Sequelize.STRING,
+    },
     document: {
         type: Sequelize.STRING,
     },
@@ -15,7 +18,7 @@ export const Operation = sequelize.define('operations', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    date_operation: {
+    start_operation: {
         type: Sequelize.STRING,
         allowNull: false
     },

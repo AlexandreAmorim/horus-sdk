@@ -1,6 +1,6 @@
-import { Box, Text } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface IPros {
     title: string
@@ -10,17 +10,21 @@ interface IPros {
 export function DashCard({ title, link }: IPros) {
     return (
         <Link to={`/${link}`}>
-            <Box border="1px"
+            <Flex
+                border="1px"
                 borderColor="gray.500"
                 borderRadius={4}
-                p={4}
-                my={2}
                 _hover={{
                     borderColor: "green.500"
-                }} height='80px' bg='gray.700'>
+                }}
+                height='80px'
+                bg='gray.700'
+                alignItems="center"
+                justifyContent="center"
+            >
 
                 <Text fontWeight="bold" fontSize="2xl">{title}</Text>
-            </Box>
+            </Flex>
         </Link>
     );
 }

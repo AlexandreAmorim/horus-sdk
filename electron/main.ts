@@ -48,9 +48,10 @@ async function registerListeners() {
 
   ipcMain.handle("createOperation", async (_, operation) => {
     const result = await Operation.create({
+      cod: operation.cod,
       document: operation.document,
       team: operation.team,
-      date_operation: operation.date_operation,
+      start_operation: operation.start_operation,
       county: operation.county,
       district: operation.district,
       place: operation.place,
@@ -61,12 +62,26 @@ async function registerListeners() {
     return JSON.parse(JSON.stringify(result))
   })
 
-  ipcMain.handle("listOperations", async () => {
-    const operations = await Operation.findAll({
+  ipcMain.handle("listOperationOpen", async (_, user) => {
+    const operations = await Operation.findOne({
+      where: [{
+        document: user.document,
+        open: true
+      }],
       order: [
         ['createdAt', 'DESC']]
     })
-    console.log("XX ", operations)
+    return JSON.parse(JSON.stringify(operations))
+  })
+
+  ipcMain.handle("listOperations", async (_, user) => {
+    const operations = await Operation.findAll({
+      where: {
+        document: user.document
+      },
+      order: [
+        ['createdAt', 'DESC']]
+    })
     return JSON.parse(JSON.stringify(operations))
   })
 
